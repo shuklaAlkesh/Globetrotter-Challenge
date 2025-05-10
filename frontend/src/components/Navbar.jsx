@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   AppBar, 
@@ -30,7 +30,9 @@ import LeaderboardIcon from '@mui/icons-material/Leaderboard';
 import InfoIcon from '@mui/icons-material/Info';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { motion } from 'framer-motion';
+import Settings from './Settings';
 
 const NavButton = ({ to, children, onClick, ...props }) => {
   const location = useLocation();
@@ -236,9 +238,28 @@ const TravelLogo = ({ size = 55 }) => {
 const Navbar = ({ username, score }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState({
+    soundEnabled: true,
+    soundVolume: 70,
+    questionTimer: 30,
+    difficulty: 'medium',
+    theme: 'dark'
+  });
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('gameSettings');
+    if (savedSettings) {
+      try {
+        setSettings(JSON.parse(savedSettings));
+      } catch (error) {
+        console.error('Error loading settings:', error);
+      }
+    }
+  }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -255,6 +276,11 @@ const Navbar = ({ username, score }) => {
   const handlePlayGame = () => {
     navigate('/game');
     setMobileOpen(false);
+  };
+
+  const handleSettingsChange = (newSettings) => {
+    setSettings(newSettings);
+    localStorage.setItem('gameSettings', JSON.stringify(newSettings));
   };
 
   const menuItems = [
@@ -445,10 +471,23 @@ const Navbar = ({ username, score }) => {
           >
             <MenuItem onClick={handleClose}>Profile</MenuItem>
             <MenuItem onClick={handleClose}>My Account</MenuItem>
-            <MenuItem onClick={handleClose}>Settings</MenuItem>
+            <MenuItem onClick={() => {
+              setSettingsOpen(true);
+              handleClose();
+            }}>
+              Settings
+            </MenuItem>
             <Divider />
             <MenuItem onClick={handleClose}>Logout</MenuItem>
           </Menu>
+
+          {/* Settings Dialog */}
+          <Settings
+            open={settingsOpen}
+            onClose={() => setSettingsOpen(false)}
+            settings={settings}
+            onSettingsChange={handleSettingsChange}
+          />
         </Toolbar>
       </Container>
 

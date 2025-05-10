@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Button, Card, Typography, Box, Grid, CircularProgress, Container } from '@mui/material';
+import { Button, Card, Typography, Box, Grid, CircularProgress, Container, LinearProgress, Tooltip, IconButton } from '@mui/material';
 import confetti from 'canvas-confetti';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getDestinations } from '../data/api';
@@ -9,6 +9,11 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import PublicIcon from '@mui/icons-material/Public';
 import SentimentVeryDissatisfiedIcon from '@mui/icons-material/SentimentVeryDissatisfied';
 import SentimentVerySatisfiedIcon from '@mui/icons-material/SentimentVerySatisfied';
+import TimerIcon from '@mui/icons-material/Timer';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import SettingsIcon from '@mui/icons-material/Settings';
+import Settings from './Settings';
 
 export default function GameBoard({ onScoreUpdate, user, setGameState }) {
   const [destinations, setDestinations] = useState([]);
@@ -18,6 +23,47 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [feedbackMessage, setFeedbackMessage] = useState('');
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds per question
+  const [showHint, setShowHint] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [settings, setSettings] = useState({
+    soundEnabled: true,
+    soundVolume: 70,
+    questionTimer: 30,
+    difficulty: 'medium',
+    theme: 'dark'
+  });
+
+  // Timer effect
+  useEffect(() => {
+    if (selectedAnswer === null && timeLeft > 0) {
+      const timer = setInterval(() => {
+        setTimeLeft(prev => prev - 1);
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [selectedAnswer, timeLeft]);
+
+  // Reset timer for new question
+  useEffect(() => {
+    setTimeLeft(30);
+    setShowHint(false);
+  }, [currentQuestionIndex]);
+
+  // Load settings from localStorage on component mount
+  useEffect(() => {
+    const savedSettings = localStorage.getItem('gameSettings');
+    if (savedSettings) {
+      setSettings(JSON.parse(savedSettings));
+    }
+  }, []);
+
+  // Save settings to localStorage when they change
+  const handleSettingsChange = (newSettings) => {
+    setSettings(newSettings);
+    localStorage.setItem('gameSettings', JSON.stringify(newSettings));
+  };
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -26,8 +72,8 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         const data = await getDestinations();
         // Ensure we have all destinations loaded
         if (data && data.length > 0) {
-          setDestinations(data);
-          setCurrentQuestionIndex(0);
+        setDestinations(data);
+        setCurrentQuestionIndex(0);
           setSelectedAnswer(null);
           setShowFunFact(false);
           setFeedbackMessage('');
@@ -50,6 +96,16 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
     setShowFunFact(true);
 
     if (answer === currentDestination.correctAnswer) {
+      // Play correct answer sound if enabled
+      if (settings.soundEnabled) {
+        const audio = new Audio('/sounds/correct.mp3');
+        audio.volume = settings.soundVolume / 100;
+        audio.play().catch(() => {}); // Ignore errors if sound fails to play
+      }
+
+      // Update streak
+      setStreak(prev => prev + 1);
+      
       // Happy confetti for correct answer
       confetti({
         particleCount: 100,
@@ -71,9 +127,21 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
       setFeedbackMessage(correctMessages[Math.floor(Math.random() * correctMessages.length)]);
 
       if (user) {
-        onScoreUpdate(user.score + 10);
+        // Bonus points for streak
+        const streakBonus = Math.floor(streak / 3) * 5; // 5 bonus points every 3 correct answers
+        onScoreUpdate(user.score + 10 + streakBonus);
       }
     } else {
+      // Play wrong answer sound if enabled
+      if (settings.soundEnabled) {
+        const audio = new Audio('/sounds/wrong.mp3');
+        audio.volume = settings.soundVolume / 100;
+        audio.play().catch(() => {}); // Ignore errors if sound fails to play
+      }
+
+      // Reset streak on wrong answer
+      setStreak(0);
+      
       // Sad emoji confetti for wrong answer
       confetti({
         particleCount: 50,
@@ -189,14 +257,14 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
       py: 4
     }}>
       <Container maxWidth="md">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={currentQuestionIndex}
+    <AnimatePresence mode="wait">
+      <motion.div
+        key={currentQuestionIndex}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.5 }}
-          >
+        transition={{ duration: 0.5 }}
+      >
             <Card 
               elevation={3}
               sx={{ 
@@ -210,33 +278,90 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                 boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)'
               }}
             >
-              <Box sx={{ 
-                position: 'absolute', 
-                top: 0, 
-                right: 0, 
-                p: 2,
-                display: 'flex',
-                alignItems: 'center',
-                gap: 1
-              }}>
-                <motion.div
-                  animate={{ 
-                    rotate: [0, 10, -10, 0],
-                    scale: [1, 1.1, 1]
+              {/* Settings Button */}
+              <IconButton
+                onClick={() => setSettingsOpen(true)}
+                sx={{
+                  position: 'absolute',
+                  top: 16,
+                  right: 16,
+                  color: '#fff',
+                  '&:hover': {
+                    background: 'rgba(255, 255, 255, 0.1)',
+                  }
+                }}
+              >
+                <SettingsIcon />
+              </IconButton>
+
+              {/* Progress Bar */}
+              <Box sx={{ width: '100%', mb: 3 }}>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={(currentQuestionIndex / destinations.length) * 100}
+                  sx={{
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    '& .MuiLinearProgress-bar': {
+                      background: 'linear-gradient(45deg, #2196f3 30%, #21CBF3 90%)',
+                    }
                   }}
-                  transition={{ 
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatType: "reverse"
-                  }}
-                >
-                  <EmojiEventsIcon sx={{ color: '#fff', fontSize: 28 }} />
-                </motion.div>
-                <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold' }}>
-                  Score: {user?.score || 0}
-                </Typography>
+                />
               </Box>
 
+              {/* Stats Bar */}
+              <Box sx={{ 
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                mb: 3,
+                gap: 2
+              }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <motion.div
+                    animate={{ 
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{ 
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  >
+                    <EmojiEventsIcon sx={{ color: '#fff', fontSize: 28 }} />
+                  </motion.div>
+                  <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold' }}>
+                    Score: {user?.score || 0}
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <TimerIcon sx={{ color: timeLeft < 10 ? '#f44336' : '#fff', fontSize: 28 }} />
+                  <Typography 
+                    variant="h6" 
+                    sx={{ 
+                      color: timeLeft < 10 ? '#f44336' : '#fff',
+                      fontWeight: 'bold',
+                      animation: timeLeft < 10 ? 'pulse 1s infinite' : 'none'
+                    }}
+                  >
+                    {timeLeft}s
+                  </Typography>
+                </Box>
+
+                {streak > 0 && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <TrendingUpIcon sx={{ color: '#4CAF50', fontSize: 28 }} />
+                    <Typography variant="h6" sx={{ color: '#4CAF50', fontWeight: 'bold' }}>
+                      Streak: {streak}x
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Question Counter */}
               <Typography 
                 variant="h4" 
                 gutterBottom 
@@ -250,17 +375,18 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                   WebkitTextFillColor: 'transparent',
                 }}
               >
-                Question {currentQuestionIndex + 1} of {destinations.length}
-              </Typography>
-              
+            Question {currentQuestionIndex + 1} of {destinations.length}
+          </Typography>
+          
+              {/* Clues Section */}
               <Box sx={{ mb: 4 }}>
-                {currentDestination.clues.map((clue, index) => (
-                  <motion.div
-                    key={index}
+          {currentDestination.clues.map((clue, index) => (
+            <motion.div
+              key={index}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.2 }}
-                  >
+              transition={{ delay: index * 0.2 }}
+            >
                     <Card
                       elevation={1}
                       sx={{
@@ -294,13 +420,59 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                         <LocationOnIcon sx={{ color: '#fff', fontSize: 28 }} />
                       </motion.div>
                       <Typography variant="h6" sx={{ fontWeight: 500, color: '#fff' }}>
-                        Clue {index + 1}: {clue}
-                      </Typography>
+                Clue {index + 1}: {clue}
+              </Typography>
                     </Card>
-                  </motion.div>
-                ))}
+            </motion.div>
+          ))}
               </Box>
-              
+
+              {/* Hint Button */}
+              {!showHint && !selectedAnswer && (
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                  <Tooltip title="Get a hint (costs 5 points)">
+                    <Button
+                      variant="outlined"
+                      startIcon={<HelpOutlineIcon />}
+                      onClick={() => {
+                        setShowHint(true);
+                        if (user) {
+                          onScoreUpdate(user.score - 5);
+                        }
+                      }}
+                      sx={{
+                        borderRadius: '30px',
+                        borderColor: 'rgba(255, 255, 255, 0.2)',
+                        color: '#fff',
+                        '&:hover': {
+                          borderColor: '#fff',
+                          background: 'rgba(255, 255, 255, 0.1)',
+                        }
+                      }}
+                    >
+                      Need a Hint?
+                    </Button>
+                  </Tooltip>
+                </Box>
+              )}
+
+              {/* Hint Display */}
+              {showHint && !selectedAnswer && (
+                <Box
+                  sx={{
+                    mb: 3,
+                    p: 2,
+                    borderRadius: 2,
+                    background: 'rgba(33, 150, 243, 0.1)',
+                    border: '1px solid rgba(33, 150, 243, 0.3)',
+                  }}
+                >
+                  <Typography variant="body1" sx={{ color: '#fff', textAlign: 'center' }}>
+                    Hint: The answer is in {currentDestination.country}
+                  </Typography>
+                </Box>
+              )}
+
               <Box sx={{ 
                 mt: 4,
                 display: 'flex',
@@ -314,17 +486,17 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                         whileTap={{ scale: 0.98 }}
                         transition={{ type: "spring", stiffness: 300 }}
                       >
-                        <Button
-                          fullWidth
+                    <Button
+                      fullWidth
                           variant={selectedAnswer === option ? 
                             (option === currentDestination.correctAnswer ? "contained" : "contained") 
                             : "outlined"}
-                          color={selectedAnswer === option ? 
-                            (option === currentDestination.correctAnswer ? "success" : "error") 
-                            : "primary"}
-                          onClick={() => handleAnswer(option)}
-                          disabled={selectedAnswer !== null}
-                          sx={{ 
+                      color={selectedAnswer === option ? 
+                        (option === currentDestination.correctAnswer ? "success" : "error") 
+                        : "primary"}
+                      onClick={() => handleAnswer(option)}
+                      disabled={selectedAnswer !== null}
+                      sx={{ 
                             py: 2.5,
                             borderRadius: '30px',
                             fontSize: '1.1rem',
@@ -350,28 +522,28 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                                   'linear-gradient(45deg, #f44336 30%, #e53935 90%)') :
                                 'rgba(255, 255, 255, 0.1)',
                             }
-                          }}
-                        >
-                          {option}
-                        </Button>
-                      </motion.div>
-                    </Grid>
-                  ))}
+                      }}
+                    >
+                      {option}
+                    </Button>
+                  </motion.div>
                 </Grid>
-              </Box>
+              ))}
+            </Grid>
+          </Box>
 
-              <AnimatePresence>
-                {showFunFact && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
+          <AnimatePresence>
+            {showFunFact && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
                     transition={{ duration: 0.5 }}
-                  >
+              >
                     <Card
                       elevation={2}
-                      sx={{ 
-                        mt: 4,
+                  sx={{ 
+                    mt: 4,
                         p: 3,
                         borderRadius: 4,
                         background: 'rgba(255, 255, 255, 0.05)',
@@ -462,15 +634,32 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                         }}
                       >
                         {feedbackMessage}
-                      </Typography>
+                </Typography>
                     </Box>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </Card>
-          </motion.div>
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
       </Container>
+
+      {/* Settings Dialog */}
+      <Settings
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        settings={settings}
+        onSettingsChange={handleSettingsChange}
+      />
     </Box>
   );
 }
+
+// Add this to your CSS
+const styles = `
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+`;
