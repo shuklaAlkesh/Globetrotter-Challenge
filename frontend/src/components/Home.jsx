@@ -6,6 +6,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import { useNavigate } from 'react-router-dom';
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
   <motion.div
@@ -31,6 +32,13 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
 );
 
 export default function Home({ onStartGame }) {
+  const navigate = useNavigate();
+
+  const handleStartGame = () => {
+    onStartGame();
+    navigate('/game');
+  };
+
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
@@ -72,11 +80,11 @@ export default function Home({ onStartGame }) {
               <Button
                 variant="contained"
                 size="large"
-                onClick={onStartGame}
+                onClick={handleStartGame}
                 startIcon={<ArrowForwardIcon />}
                 sx={{ px: 4, py: 1.5, borderRadius: '30px' }}
               >
-                Start Playing
+                Start Game
               </Button>
             </motion.div>
           </Box>
@@ -270,7 +278,7 @@ export default function Home({ onStartGame }) {
               <Button 
                 variant="outlined" 
                 color="primary"
-                onClick={onStartGame}
+                onClick={handleStartGame}
                 sx={{ borderRadius: '30px' }}
               >
                 Join the Competition
@@ -297,7 +305,7 @@ export default function Home({ onStartGame }) {
               <Button
                 variant="contained"
                 size="large"
-                onClick={onStartGame}
+                onClick={handleStartGame}
                 sx={{ px: 6, py: 2, borderRadius: '30px' }}
               >
                 Start Your Journey

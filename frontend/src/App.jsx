@@ -107,6 +107,7 @@ export default function App() {
           <main style={{ flex: 1, padding: '20px 0' }}>
             <Routes>
               <Route path="/" element={renderGameContent()} />
+              <Route path="/game" element={renderGameContent()} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/achievements" element={<Achievements />} />
               <Route path="/about" element={<About />} />
