@@ -75,11 +75,14 @@ export default function App() {
       setUser(updatedUser);
     } catch (error) {
       console.error('Error updating score:', error);
-      // Don't update the UI if the score update fails
     }
   };
 
   const renderGameContent = () => {
+    if (!user) {
+      return <UserForm onSubmit={handleUserSubmit} />;
+    }
+
     switch (gameState) {
       case 'home':
         return <Home onStartGame={handleStartGame} />;
@@ -106,7 +109,7 @@ export default function App() {
           />
           <main style={{ flex: 1, padding: '20px 0' }}>
             <Routes>
-              <Route path="/" element={renderGameContent()} />
+              <Route path="/" element={<Home onStartGame={handleStartGame} />} />
               <Route path="/game" element={renderGameContent()} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/achievements" element={<Achievements />} />

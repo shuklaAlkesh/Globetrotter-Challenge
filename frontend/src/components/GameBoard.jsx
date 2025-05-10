@@ -24,8 +24,16 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
       try {
         setLoading(true);
         const data = await getDestinations();
-        setDestinations(data);
-        setCurrentQuestionIndex(0);
+        // Ensure we have all destinations loaded
+        if (data && data.length > 0) {
+          setDestinations(data);
+          setCurrentQuestionIndex(0);
+          setSelectedAnswer(null);
+          setShowFunFact(false);
+          setFeedbackMessage('');
+        } else {
+          setError('No questions available. Please try again later.');
+        }
       } catch (error) {
         console.error('Error fetching destinations:', error);
         setError('Failed to load game data. Please try again.');

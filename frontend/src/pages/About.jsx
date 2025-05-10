@@ -231,23 +231,23 @@ const About = () => {
             mb: { xs: 6, md: 8 },
             px: { xs: 2, md: 0 },
           }}>
-            <Typography
+          <Typography
               variant="h2"
-              component="h1"
-              sx={{
-                fontWeight: 'bold',
-                mb: 2,
-                background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
+            component="h1"
+            sx={{
+              fontWeight: 'bold',
+              mb: 2,
+              background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
                 fontSize: { xs: '2.5rem', md: '3.5rem' },
-              }}
-            >
-              About Globetrotter
-            </Typography>
-            <Typography
+            }}
+          >
+            About Globetrotter
+          </Typography>
+          <Typography
               variant="h5"
-              color="text.secondary"
+            color="text.secondary"
               sx={{ 
                 maxWidth: '800px', 
                 mx: 'auto', 
@@ -257,7 +257,7 @@ const About = () => {
               }}
             >
               Your journey to becoming a geography expert starts here. Explore the world, test your knowledge, and compete with players globally.
-            </Typography>
+          </Typography>
           </Box>
 
           <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mb: { xs: 6, md: 8 } }}>
@@ -268,7 +268,7 @@ const About = () => {
             ))}
           </Grid>
 
-          <Paper
+              <Paper
             elevation={3}
             sx={{
               p: { xs: 3, md: 4 },
@@ -286,16 +286,16 @@ const About = () => {
           >
             <Typography 
               variant="h4" 
-              sx={{ 
+                sx={{
                 mb: 3, 
                 fontWeight: 'bold', 
                 color: '#fff',
                 fontSize: { xs: '1.75rem', md: '2.125rem' },
-                textAlign: 'center',
-              }}
-            >
+                  textAlign: 'center',
+                }}
+              >
               How to Play
-            </Typography>
+                </Typography>
             <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
               {[
                 'Start by creating an account or logging in to track your progress and compete on the leaderboard.',
@@ -338,7 +338,7 @@ const About = () => {
                 </Typography>
               ))}
             </Box>
-          </Paper>
+              </Paper>
 
           {/* Mission Section */}
           <Box sx={{ 
@@ -348,16 +348,16 @@ const About = () => {
             <Typography
               variant="h4"
               component="h2"
-              sx={{
+                sx={{
                 fontWeight: 'bold',
                 mb: { xs: 4, md: 6 },
-                textAlign: 'center',
+                  textAlign: 'center',
                 color: '#fff',
                 fontSize: { xs: '1.75rem', md: '2.125rem' },
-              }}
-            >
+                }}
+              >
               Our Core Values
-            </Typography>
+                </Typography>
             <Grid 
               container 
               spacing={{ xs: 3, md: 4 }} 
@@ -394,18 +394,18 @@ const About = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}
                   >
-                    <Paper
+              <Paper
                       component={motion.div}
                       whileHover={{ y: -8, scale: 1.02 }}
                       transition={{ duration: 0.3 }}
-                      sx={{
-                        height: '100%',
+                sx={{
+                  height: '100%',
                         background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
                         backdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         borderRadius: 4,
                         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                        textAlign: 'center',
+                  textAlign: 'center',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -456,7 +456,7 @@ const About = () => {
                         }}
                       >
                         {item.title}
-                      </Typography>
+                </Typography>
                       <Typography 
                         color="text.secondary" 
                         sx={{ 
@@ -468,8 +468,8 @@ const About = () => {
                         }}
                       >
                         {item.description}
-                      </Typography>
-                    </Paper>
+                </Typography>
+              </Paper>
                   </motion.div>
                 </Grid>
               ))}
@@ -478,19 +478,19 @@ const About = () => {
 
           {/* Team Section */}
           <Box sx={{ mb: { xs: 6, md: 8 } }}>
-            <Typography
-              variant="h4"
-              component="h2"
-              sx={{
-                fontWeight: 'bold',
+          <Typography
+            variant="h4"
+            component="h2"
+            sx={{
+              fontWeight: 'bold',
                 mb: { xs: 4, md: 6 },
-                textAlign: 'center',
+              textAlign: 'center',
                 color: '#fff',
                 fontSize: { xs: '1.75rem', md: '2.125rem' },
-              }}
-            >
-              Meet Our Team
-            </Typography>
+            }}
+          >
+            Meet Our Team
+          </Typography>
             <Grid container spacing={{ xs: 3, md: 4 }} sx={{ justifyContent: 'center' }}>
               {teamMembers.map((member, index) => (
                 <Grid item xs={12} sm={8} md={6} lg={4} key={member.name}>
@@ -632,9 +632,9 @@ const About = () => {
                       </Box>
                     </Paper>
                   </motion.div>
-                </Grid>
-              ))}
-            </Grid>
+              </Grid>
+            ))}
+          </Grid>
           </Box>
 
           {/* Contact Section */}
