@@ -34,6 +34,8 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
     difficulty: 'medium',
     theme: 'dark'
   });
+  const [correctAnswers, setCorrectAnswers] = useState(0);
+  const [incorrectAnswers, setIncorrectAnswers] = useState(0);
 
   // Timer effect
   useEffect(() => {
@@ -103,8 +105,9 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         audio.play().catch(() => {}); // Ignore errors if sound fails to play
       }
 
-      // Update streak
+      // Update streak and correct answers count
       setStreak(prev => prev + 1);
+      setCorrectAnswers(prev => prev + 1);
       
       // Happy confetti for correct answer
       confetti({
@@ -139,8 +142,9 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         audio.play().catch(() => {}); // Ignore errors if sound fails to play
       }
 
-      // Reset streak on wrong answer
+      // Reset streak and update incorrect answers count
       setStreak(0);
+      setIncorrectAnswers(prev => prev + 1);
       
       // Sad emoji confetti for wrong answer
       confetti({
@@ -183,6 +187,32 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         setGameState('home');
       }
     }, 3000);
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < destinations.length - 1) {
+      setCurrentQuestionIndex(prev => prev + 1);
+      setSelectedAnswer(null);
+      setShowFunFact(false);
+      setFeedbackMessage('');
+      setTimeLeft(30);
+      setShowHint(false);
+    } else {
+      // Game Over
+      setGameState('home');
+    }
+  };
+
+  const handlePlayAgain = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setShowFunFact(false);
+    setFeedbackMessage('');
+    setTimeLeft(30);
+    setShowHint(false);
+    setStreak(0);
+    setCorrectAnswers(0);
+    setIncorrectAnswers(0);
   };
 
   if (loading) {
@@ -310,7 +340,7 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                 />
               </Box>
 
-              {/* Stats Bar */}
+              {/* Updated Stats Bar */}
               <Box sx={{ 
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -335,6 +365,37 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                   <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold' }}>
                     Score: {user?.score || 0}
                   </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    background: 'rgba(76, 175, 80, 0.1)',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(76, 175, 80, 0.3)'
+                  }}>
+                    <SentimentVerySatisfiedIcon sx={{ color: '#4CAF50', fontSize: 24 }} />
+                    <Typography variant="body1" sx={{ color: '#4CAF50', fontWeight: 600 }}>
+                      Correct: {correctAnswers}
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: 1,
+                    background: 'rgba(244, 67, 54, 0.1)',
+                    padding: '4px 12px',
+                    borderRadius: '20px',
+                    border: '1px solid rgba(244, 67, 54, 0.3)'
+                  }}>
+                    <SentimentVeryDissatisfiedIcon sx={{ color: '#f44336', fontSize: 24 }} />
+                    <Typography variant="body1" sx={{ color: '#f44336', fontWeight: 600 }}>
+                      Incorrect: {incorrectAnswers}
+                    </Typography>
+                  </Box>
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -639,6 +700,45 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
               </motion.div>
             )}
           </AnimatePresence>
+
+          {/* Next Button */}
+          {selectedAnswer && (
+            <Box sx={{ display: 'flex', justifyContent: 'center', gap: 2, mt: 3 }}>
+              <Button
+                variant="contained"
+                onClick={handleNextQuestion}
+                sx={{
+                  borderRadius: '30px',
+                  background: 'linear-gradient(45deg, #2196f3 30%, #21CBF3 90%)',
+                  color: '#fff',
+                  px: 4,
+                  py: 1.5,
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #1976d2 30%, #1E88E5 90%)',
+                  }
+                }}
+              >
+                {currentQuestionIndex < destinations.length - 1 ? 'Next Question' : 'Finish Game'}
+              </Button>
+              <Button
+                variant="outlined"
+                onClick={handlePlayAgain}
+                sx={{
+                  borderRadius: '30px',
+                  borderColor: 'rgba(255, 255, 255, 0.2)',
+                  color: '#fff',
+                  px: 4,
+                  py: 1.5,
+                  '&:hover': {
+                    borderColor: '#fff',
+                    background: 'rgba(255, 255, 255, 0.1)',
+                  }
+                }}
+              >
+                Play Again
+              </Button>
+            </Box>
+          )}
         </Card>
       </motion.div>
     </AnimatePresence>
