@@ -4,18 +4,36 @@ Welcome to Globetrotter, a fun, interactive, and AI-powered full-stack web app t
 
 ## 🎮 Live Demo
 - Frontend: [https://globetrotter-travel-guessing-game-alpha.vercel.app/](https://globetrotter-travel-guessing-game-alpha.vercel.app/)
+- Backend: [https://globetrotter-challenge-backend-zlqb.onrender.com](https://globetrotter-challenge-backend-zlqb.onrender.com/)
 
 ## 🚀 What is Globetrotter?
 Globetrotter is a travel-themed guessing game that offers:
 
--Cryptic clues and images of global landmarks
+- Cryptic clues and images of global landmarks
+- Fun trivia after every answer
+- Score-based gameplay with streak bonuses
+- Social features to challenge and compete with friends
+- A beautifully animated, responsive, and modern UI/UX
 
--Fun trivia after every answer
+## 🎮 Gameplay Overview
 
--Score-based gameplay with streak bonuses
+### Start Playing
+- Click "Play Now" on the home page
+- View a clue (text/image) and choose the correct destination
+- Answer correctly to unlock a fun fact and earn points
+- Wrong guesses also show fun trivia—but no points!
 
--Social features to challenge and compete with friends
--A beautifully animated, responsive, and modern UI/UX
+### Scoring System
+- ✅ Correct Answer: +10 points
+- ⚡ Time Bonus: +1 to +5 points (based on speed)
+- 🔥 Streak Bonus: +5 points per 3 correct answers
+- ❌ Wrong Answer: -5 points
+- 💡 Skip Question: Limited uses
+
+### Challenge Friends
+- Share your game via WhatsApp with a dynamic image + score
+- Friends can click your invite link and play with the same questions
+- You see each other's scores!
 
 ## ✨ Implemented Features
 
@@ -62,47 +80,54 @@ Globetrotter is a travel-themed guessing game that offers:
    - Error handling and feedback
    - Loading states and transitions
 
-## 🛠️ Technical Implementation
+## 📁 Project Structure
+```
+globetrotter-challenge/
+├── frontend/                 # Frontend React application
+│   ├── public/              # Static files
+│   │   ├── index.html       # HTML template
+│   │   ├── assets/          # Static assets
+│   │   └── styles/          # CSS/SCSS files
+│   ├── src/                 # Source files
+│   │   ├── components/      # React components
+│   │   ├── contexts/        # React contexts
+│   │   ├── hooks/           # Custom hooks
+│   │   ├── pages/           # Page components
+│   │   ├── services/        # API services
+│   │   └── utils/           # Utility functions
+│   ├── package.json         # Frontend dependencies
+│   └── vite.config.js       # Vite configuration
+│
+├── backend/                 # Backend Node.js application
+│   ├── src/                # Source files
+│   │   ├── config/         # Configuration files
+│   │   ├── controllers/    # Route controllers
+│   │   ├── middleware/     # Custom middleware
+│   │   ├── models/         # Database models
+│   │   ├── routes/         # API routes
+│   │   └── utils/          # Utility functions
+│   ├── package.json         # Backend dependencies
+│   └── vercel.json          # Vercel configuration
+│
+├── .gitignore              # Git ignore file
+└── README.md              # Project documentation
+```
 
-### Frontend Architecture
-1. **React Components**
-   - Modular component structure
-   - Reusable UI components
-   - Custom hooks for game logic
-   - Context API for state management
+## 🚀 Installation Guide
 
-2. **State Management**
-   - React Context for global state
-   - Local state for component-specific data
-   - Persistent storage with localStorage
-   - Real-time score updates
+### Prerequisites
+- Node.js (v14 or higher)
+- npm (v6 or higher)
+- MongoDB (v4.4 or higher)
 
-3. **Routing**
-   - React Router for navigation
-   - Protected routes for authenticated users
-   - Dynamic route handling
-   - Smooth page transitions
+### Clone the Repository
+```bash
+# Clone the repository
+git clone https://github.com/shuklaAlkesh/Globetrotter-Challenge.git
 
-### Backend Architecture
-1. **API Structure**
-   - RESTful API design
-   - JWT authentication
-   - Rate limiting for security
-   - Error handling middleware
-
-2. **Database**
-   - MongoDB for data storage
-   - Mongoose for data modeling
-   - User data persistence
-   - Game state management
-
-3. **Security**
-   - JWT-based authentication
-   - Password hashing
-   - CORS protection
-   - Rate limiting
-
-## 🚀 Setup Instructions
+# Navigate to project directory
+cd Globetrotter-Challenge
+```
 
 ### Frontend Setup
 ```bash
@@ -113,7 +138,7 @@ cd frontend
 npm install
 
 # Create .env file
-VITE_API_URL=http://localhost:5000/api
+echo "VITE_API_URL=http://localhost:5000/api" > .env
 
 # Start development server
 npm run dev
@@ -128,10 +153,12 @@ cd backend
 npm install
 
 # Create .env file
+cat > .env << EOL
 PORT=5000
 MONGODB_URI=your_mongodb_uri
 JWT_SECRET=your_jwt_secret
 CORS_ORIGIN=http://localhost:5173
+EOL
 
 # Start server
 npm run dev
@@ -161,7 +188,6 @@ npm run dev
 1. **User Registration**
    - Create account
    - Set username
-   - Choose avatar
 
 2. **Game Start**
    - Select difficulty
@@ -192,11 +218,6 @@ npm run dev
    - XSS prevention
    - CSRF protection
 
-3. **API Security**
-   - Rate limiting
-   - Request validation
-   - Error handling
-
 ## 🎯 Future Enhancements
 
 1. **Planned Features**
@@ -210,3 +231,22 @@ npm run dev
    - Enhanced error handling
    - Additional security measures
    - Improved analytics
+
+## 🎉 Conclusion
+
+Globetrotter Challenge is more than just a game - it's an engaging platform that combines education, entertainment, and social interaction. By challenging players to identify global landmarks and learn interesting facts about different locations, it promotes cultural awareness and geographical knowledge in an enjoyable way.
+
+The project demonstrates modern web development practices, featuring:
+- A robust full-stack architecture
+- Real-time gameplay mechanics
+- Secure user authentication
+- Responsive and intuitive UI/UX
+- Social sharing capabilities
+
+Whether you're a developer looking to contribute, a player seeking to test your knowledge, or an educator wanting to make geography fun, Globetrotter Challenge offers something for everyone. Join us in making global exploration exciting and accessible!
+
+Happy Traveling! 🌎✈️
+
+
+
+
