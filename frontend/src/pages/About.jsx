@@ -10,6 +10,7 @@ import {
   Card,
   CardContent,
   IconButton,
+  useMediaQuery,
 } from '@mui/material';
 import { motion } from 'framer-motion';
 import PublicIcon from '@mui/icons-material/Public';
@@ -25,136 +26,284 @@ import SecurityIcon from '@mui/icons-material/Security';
 import Footer from '../components/Footer';
 
 const TeamMember = ({ name, role, avatar, social }) => (
-  <Paper
-    component={motion.div}
-    whileHover={{ y: -5, scale: 1.02 }}
-    transition={{ duration: 0.3 }}
-    sx={{
-      p: { xs: 2, md: 3 },
-      height: '100%',
-      background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-      backdropFilter: 'blur(10px)',
-      border: '1px solid rgba(255, 255, 255, 0.1)',
-      borderRadius: 2,
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-      textAlign: 'center',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-    }}
-  >
-    <Avatar
-      src={avatar}
-      alt={name}
-      sx={{
-        width: { xs: 100, md: 120 },
-        height: { xs: 100, md: 120 },
-        mx: 'auto',
-        mb: 2,
-        border: '4px solid',
-        borderColor: 'primary.main',
-        transition: 'transform 0.3s ease',
-        '&:hover': {
-          transform: 'scale(1.1)',
-        },
-      }}
-    />
-    <Typography variant="h6" fontWeight="bold" gutterBottom sx={{ color: '#fff' }}>
-      {name}
-    </Typography>
-    <Typography color="text.secondary" sx={{ mb: 2 }}>
-      {role}
-    </Typography>
-    <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
-      {social.github && (
-        <IconButton 
-          href={social.github} 
-          target="_blank" 
-          sx={{ 
-            color: 'primary.main',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.2)',
-              color: '#fff',
-            },
-          }}
-        >
-          <GitHubIcon />
-        </IconButton>
-      )}
-      {social.linkedin && (
-        <IconButton 
-          href={social.linkedin} 
-          target="_blank" 
-          sx={{ 
-            color: 'primary.main',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.2)',
-              color: '#fff',
-            },
-          }}
-        >
-          <LinkedInIcon />
-        </IconButton>
-      )}
-      {social.twitter && (
-        <IconButton 
-          href={social.twitter} 
-          target="_blank" 
-          sx={{ 
-            color: 'primary.main',
-            transition: 'transform 0.3s ease',
-            '&:hover': {
-              transform: 'scale(1.2)',
-              color: '#fff',
-            },
-          }}
-        >
-          <TwitterIcon />
-        </IconButton>
-      )}
-    </Box>
-  </Paper>
-);
-
-const FeatureCard = ({ icon, title, description }) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
+    whileInView={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.5 }}
+    viewport={{ once: true }}
   >
-    <Card
+    <Paper
       sx={{
+        p: { xs: 2.5, md: 3 },
         height: '100%',
         background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
         backdropFilter: 'blur(10px)',
         border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: 4,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+        textAlign: 'center',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        overflow: 'hidden',
         transition: 'all 0.3s ease-in-out',
         '&:hover': {
           transform: 'translateY(-8px)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           border: '1px solid rgba(255, 255, 255, 0.2)',
+          '& .avatar-container': {
+            transform: 'scale(1.1)',
+            borderColor: 'primary.main',
+          },
+          '& .social-icons': {
+            opacity: 1,
+            transform: 'translateY(0)',
+          },
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          background: 'linear-gradient(90deg, #2196f3, #1976d2)',
+          opacity: 0.8,
         },
       }}
     >
-      <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+      <Box
+        className="avatar-container"
+        sx={{
+          position: 'relative',
+          mb: 2,
+          transition: 'all 0.3s ease-in-out',
+        }}
+      >
+        <Avatar
+          src={avatar}
+          alt={name}
+          sx={{
+            width: { xs: 120, md: 140 },
+            height: { xs: 120, md: 140 },
+            border: '4px solid',
+            borderColor: 'rgba(255, 255, 255, 0.1)',
+            transition: 'all 0.3s ease-in-out',
+          }}
+        />
+        <Box
+          sx={{
+            position: 'absolute',
+            bottom: 0,
+            right: 0,
+            width: 40,
+            height: 40,
+            borderRadius: '50%',
+            background: 'linear-gradient(145deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: '2px solid rgba(255, 255, 255, 0.1)',
+          }}
+        >
+          <AutoAwesomeIcon sx={{ color: 'primary.main', fontSize: 20 }} />
+        </Box>
+      </Box>
+      <Typography 
+        variant="h5" 
+        sx={{ 
+          fontWeight: 'bold', 
+          mb: 1,
+          background: 'linear-gradient(45deg, #fff 30%, #e3f2fd 90%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+        }}
+      >
+        {name}
+      </Typography>
+      <Typography 
+        color="text.secondary" 
+        sx={{ 
+          mb: 3,
+          fontSize: '1.1rem',
+          opacity: 0.9,
+        }}
+      >
+        {role}
+      </Typography>
+      <Box 
+        className="social-icons"
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: 1.5,
+          opacity: 0.8,
+          transform: 'translateY(10px)',
+          transition: 'all 0.3s ease-in-out',
+        }}
+      >
+        {social.github && (
+          <IconButton 
+            href={social.github} 
+            target="_blank" 
+            sx={{ 
+              color: 'primary.main',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.2)',
+                color: '#fff',
+                backgroundColor: 'primary.main',
+              },
+            }}
+          >
+            <GitHubIcon />
+          </IconButton>
+        )}
+        {social.linkedin && (
+          <IconButton 
+            href={social.linkedin} 
+            target="_blank" 
+            sx={{ 
+              color: 'primary.main',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.2)',
+                color: '#fff',
+                backgroundColor: 'primary.main',
+              },
+            }}
+          >
+            <LinkedInIcon />
+          </IconButton>
+        )}
+        {social.twitter && (
+          <IconButton 
+            href={social.twitter} 
+            target="_blank" 
+            sx={{ 
+              color: 'primary.main',
+              transition: 'all 0.3s ease-in-out',
+              '&:hover': {
+                transform: 'scale(1.2)',
+                color: '#fff',
+                backgroundColor: 'primary.main',
+              },
+            }}
+          >
+            <TwitterIcon />
+          </IconButton>
+        )}
+      </Box>
+    </Paper>
+  </motion.div>
+);
+
+const FeatureCard = ({ icon, title, description }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    viewport={{ once: true }}
+  >
+    <Card
+      sx={{
+        height: '100%',
+        minHeight: { xs: '220px', sm: '240px' },
+        background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.1)',
+        borderRadius: 4,
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
+        transition: 'all 0.3s ease-in-out',
+        position: 'relative',
+        overflow: 'hidden',
+        '&:hover': {
+          transform: 'translateY(-8px)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          border: '1px solid rgba(255, 255, 255, 0.2)',
+          '& .icon-container': {
+            transform: 'scale(1.1) rotate(5deg)',
+            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+          },
+          '& .card-content': {
+            transform: 'translateY(-5px)',
+          },
+        },
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          background: 'linear-gradient(90deg, #2196f3, #1976d2)',
+          opacity: 0.8,
+        },
+      }}
+    >
+      <CardContent sx={{ p: { xs: 3, sm: 3.5 } }} className="card-content">
         <Box sx={{ 
           display: 'flex', 
           alignItems: 'center', 
-          mb: 2,
-          transition: 'transform 0.3s ease',
-          '&:hover': {
-            transform: 'scale(1.05)',
-          },
+          mb: 3,
+          gap: 2.5,
         }}>
-          {icon}
-          <Typography variant="h6" sx={{ ml: 1, fontWeight: 'bold', color: '#fff' }}>
-            {title}
-          </Typography>
+          <Box
+            className="icon-container"
+            sx={{
+              width: { xs: 64, sm: 72 },
+              height: { xs: 64, sm: 72 },
+              minWidth: { xs: 64, sm: 72 },
+              borderRadius: '20px',
+              background: 'linear-gradient(145deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.05) 100%)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0,
+              transition: 'all 0.3s ease-in-out',
+              border: '1px solid rgba(33, 150, 243, 0.2)',
+            }}
+          >
+            {icon}
+          </Box>
+          <Box>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 'bold', 
+                color: '#fff',
+                fontSize: { xs: '1.3rem', sm: '1.5rem' },
+                mb: 0.5,
+                background: 'linear-gradient(45deg, #fff 30%, #e3f2fd 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              {title}
+            </Typography>
+            <Typography 
+              variant="body2" 
+              sx={{ 
+                color: 'text.secondary',
+                opacity: 0.8,
+                fontSize: { xs: '0.9rem', sm: '1rem' },
+              }}
+            >
+              Discover more
+            </Typography>
+          </Box>
         </Box>
-        <Typography variant="body1" color="text.secondary">
+        <Typography 
+          variant="body1" 
+          color="text.secondary"
+          sx={{ 
+            fontSize: { xs: '1rem', sm: '1.1rem' },
+            lineHeight: 1.7,
+            opacity: 0.9,
+          }}
+        >
           {description}
         </Typography>
       </CardContent>
@@ -164,6 +313,7 @@ const FeatureCard = ({ icon, title, description }) => (
 
 const About = () => {
   const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   const teamMembers = [
     {
@@ -180,41 +330,62 @@ const About = () => {
 
   const features = [
     {
-      icon: <PublicIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <PublicIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Global Exploration',
       description: 'Discover fascinating destinations from around the world through engaging clues and interesting facts. Test your knowledge of geography, culture, and landmarks.'
     },
     {
-      icon: <EmojiEventsIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <EmojiEventsIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Competitive Gaming',
       description: 'Compete with players worldwide on our global leaderboard. Earn points for correct answers and climb the ranks to become the ultimate globetrotter.'
     },
     {
-      icon: <SchoolIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <SchoolIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Educational Value',
       description: 'Learn interesting facts about different countries, their cultures, landmarks, and geography. Each question comes with a fun fact to expand your knowledge.'
     },
     {
-      icon: <GroupsIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <GroupsIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Community Engagement',
       description: 'Join a community of geography enthusiasts. Share your achievements, participate in weekly challenges, and connect with fellow globetrotters.'
     },
     {
-      icon: <AutoAwesomeIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <AutoAwesomeIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Interactive Experience',
       description: 'Enjoy a dynamic gaming experience with animations, sound effects, and visual feedback. Get instant responses and encouraging messages for your answers.'
     },
     {
-      icon: <SecurityIcon sx={{ fontSize: 32, color: 'primary.main' }} />,
+      icon: <SecurityIcon sx={{ fontSize: { xs: 32, sm: 36 }, color: 'primary.main' }} />,
       title: 'Secure & Reliable',
       description: 'Play with confidence knowing your data is secure. Our platform uses industry-standard security measures to protect your information.'
+    }
+  ];
+
+  const coreValues = [
+    {
+      icon: <PublicIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
+      title: 'Our Mission',
+      description: 'To make learning about world geography fun and engaging through interactive gameplay and challenging puzzles.',
+      gradient: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)'
+    },
+    {
+      icon: <PsychologyIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
+      title: 'Our Vision',
+      description: 'To create a global community of curious minds who love to explore and learn about different cultures and places.',
+      gradient: 'linear-gradient(45deg, #0d47a1 30%, #1a237e 90%)'
+    },
+    {
+      icon: <EmojiEventsIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
+      title: 'Our Values',
+      description: 'We believe in creating an inclusive, educational, and entertaining platform that brings people together through shared experiences.',
+      gradient: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)'
     }
   ];
 
   return (
     <Box sx={{ 
       minHeight: '100vh', 
-      py: { xs: 4, md: 8 },
+      py: { xs: 6, md: 10 },
       background: 'transparent',
       display: 'flex',
       flexDirection: 'column',
@@ -226,286 +397,116 @@ const About = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
+          {/* Header Section */}
           <Box sx={{ 
             textAlign: 'center', 
-            mb: { xs: 6, md: 8 },
+            mb: { xs: 8, md: 10 },
             px: { xs: 2, md: 0 },
           }}>
-          <Typography
-              variant="h2"
-            component="h1"
-            sx={{
-              fontWeight: 'bold',
-              mb: 2,
-              background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
+            <Typography
+              variant="h1"
+              component="h1"
+              sx={{
+                fontWeight: 'bold',
+                mb: 3,
+                background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
                 fontSize: { xs: '2.5rem', md: '3.5rem' },
-            }}
-          >
-            About Globetrotter
-          </Typography>
-          <Typography
+                lineHeight: 1.2,
+              }}
+            >
+              About Globetrotter
+            </Typography>
+            <Typography
               variant="h5"
-            color="text.secondary"
+              color="text.secondary"
               sx={{ 
                 maxWidth: '800px', 
-                mx: 'auto', 
-                mb: 4,
+                mx: 'auto',
                 fontSize: { xs: '1.1rem', md: '1.25rem' },
-                px: { xs: 2, md: 0 },
+                lineHeight: 1.6,
+                opacity: 0.9,
               }}
             >
-              Your journey to becoming a geography expert starts here. Explore the world, test your knowledge, and compete with players globally.
-          </Typography>
+              Discover the world through an engaging game of geography and exploration
+            </Typography>
           </Box>
 
-          <Grid container spacing={{ xs: 2, md: 4 }} sx={{ mb: { xs: 6, md: 8 } }}>
-            {features.map((feature, index) => (
-              <Grid item xs={12} md={6} lg={4} key={index}>
-                <FeatureCard {...feature} />
-              </Grid>
-            ))}
-          </Grid>
-
-              <Paper
-            elevation={3}
-            sx={{
-              p: { xs: 3, md: 4 },
-              borderRadius: 4,
-              background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              mb: { xs: 6, md: 8 },
-              transition: 'transform 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-5px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-              },
-            }}
-          >
-            <Typography 
-              variant="h4" 
-                sx={{
-                mb: 3, 
-                fontWeight: 'bold', 
-                color: '#fff',
-                fontSize: { xs: '1.75rem', md: '2.125rem' },
-                  textAlign: 'center',
-                }}
-              >
-              How to Play
-                </Typography>
-            <Box sx={{ maxWidth: '800px', mx: 'auto' }}>
-              {[
-                'Start by creating an account or logging in to track your progress and compete on the leaderboard.',
-                'Each game consists of multiple questions about different destinations around the world.',
-                'You\'ll receive clues about a location - use your knowledge to identify the correct destination.',
-                'Earn points for correct answers (+10) and lose points for incorrect ones (-5).',
-                'Learn interesting facts about each destination, whether you get the answer right or wrong.',
-                'Compete with other players and climb the global leaderboard to become the ultimate globetrotter!'
-              ].map((text, index) => (
-                <Typography 
-                  key={index}
-                  variant="body1" 
-                  paragraph 
-                  color="text.secondary"
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 2,
-                    mb: 2,
-                    fontSize: { xs: '0.9rem', md: '1rem' },
-                  }}
-                >
-                  <Box 
-                    sx={{ 
-                      minWidth: 24, 
-                      height: 24, 
-                      borderRadius: '50%', 
-                      bgcolor: 'primary.main',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: '#fff',
-                      fontWeight: 'bold',
-                      fontSize: '0.875rem',
-                    }}
-                  >
-                    {index + 1}
-                  </Box>
-                  {text}
-                </Typography>
-              ))}
-            </Box>
-              </Paper>
-
-          {/* Mission Section */}
-          <Box sx={{ 
-            mb: { xs: 6, md: 8 },
-            px: { xs: 2, md: 4 }
-          }}>
+          {/* Features Section */}
+          <Box sx={{ mb: { xs: 8, md: 10 } }}>
             <Typography
-              variant="h4"
+              variant="h2"
               component="h2"
-                sx={{
+              sx={{
                 fontWeight: 'bold',
-                mb: { xs: 4, md: 6 },
-                  textAlign: 'center',
-                color: '#fff',
-                fontSize: { xs: '1.75rem', md: '2.125rem' },
-                }}
-              >
-              Our Core Values
-                </Typography>
-            <Grid 
-              container 
-              spacing={{ xs: 3, md: 4 }} 
-              sx={{ 
-                justifyContent: 'center',
-                maxWidth: '1200px',
-                mx: 'auto',
-                px: { xs: 1, md: 2 }
+                mb: 6,
+                textAlign: 'center',
+                fontSize: { xs: '2rem', md: '2.5rem' },
+                background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
-              {[
-                {
-                  icon: <PublicIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
-                  title: 'Our Mission',
-                  description: 'To make learning about world geography fun and engaging through interactive gameplay and challenging puzzles.',
-                  gradient: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)'
-                },
-                {
-                  icon: <PsychologyIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
-                  title: 'Our Vision',
-                  description: 'To create a global community of curious minds who love to explore and learn about different cultures and places.',
-                  gradient: 'linear-gradient(45deg, #0d47a1 30%, #1a237e 90%)'
-                },
-                {
-                  icon: <EmojiEventsIcon sx={{ fontSize: { xs: 40, md: 48 }, color: 'primary.main' }} />,
-                  title: 'Our Values',
-                  description: 'We believe in creating an inclusive, educational, and entertaining platform that brings people together through shared experiences.',
-                  gradient: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)'
-                }
-              ].map((item, index) => (
-                <Grid item xs={12} md={4} key={index}>
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.2 }}
-                  >
-              <Paper
-                      component={motion.div}
-                      whileHover={{ y: -8, scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
-                sx={{
-                  height: '100%',
-                        background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-                        backdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                        borderRadius: 4,
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
-                  textAlign: 'center',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        position: 'relative',
-                        overflow: 'hidden',
-                        p: { xs: 3, md: 4 },
-                        '&::before': {
-                          content: '""',
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          height: '4px',
-                          background: item.gradient,
-                          opacity: 0.7,
-                        },
-                      }}
-                    >
-                      <Box 
-                        sx={{ 
-                          width: { xs: 80, md: 100 },
-                          height: { xs: 80, md: 100 },
-                          borderRadius: '50%',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
-                          mb: 3,
-                          border: '2px solid',
-                          borderColor: 'primary.main',
-                          transition: 'transform 0.3s ease',
-                          '&:hover': {
-                            transform: 'scale(1.1)',
-                          },
-                        }}
-                      >
-                        {item.icon}
-                      </Box>
-                      <Typography 
-                        variant="h5" 
-                        fontWeight="bold" 
-                        gutterBottom 
-                        sx={{ 
-                          color: '#fff',
-                          fontSize: { xs: '1.5rem', md: '1.75rem' },
-                          mb: 2,
-                        }}
-                      >
-                        {item.title}
-                </Typography>
-                      <Typography 
-                        color="text.secondary" 
-                        sx={{ 
-                          mb: 3,
-                          fontSize: { xs: '1rem', md: '1.1rem' },
-                          fontWeight: 500,
-                          lineHeight: 1.6,
-                          px: { xs: 1, md: 2 }
-                        }}
-                      >
-                        {item.description}
-                </Typography>
-              </Paper>
-                  </motion.div>
+              Our Features
+            </Typography>
+            <Grid container spacing={{ xs: 3, sm: 4, md: 5 }}>
+              {features.map((feature, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <FeatureCard {...feature} />
                 </Grid>
               ))}
             </Grid>
           </Box>
 
-          {/* Team Section */}
-          <Box sx={{ mb: { xs: 6, md: 8 } }}>
-          <Typography
-            variant="h4"
-            component="h2"
-            sx={{
-              fontWeight: 'bold',
-                mb: { xs: 4, md: 6 },
-              textAlign: 'center',
-                color: '#fff',
-                fontSize: { xs: '1.75rem', md: '2.125rem' },
-            }}
-          >
-            Meet Our Team
-          </Typography>
-            <Grid container spacing={{ xs: 3, md: 4 }} sx={{ justifyContent: 'center' }}>
-              {teamMembers.map((member, index) => (
-                <Grid item xs={12} sm={8} md={6} lg={4} key={member.name}>
+          {/* Core Values Section */}
+          <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Typography
+              variant="h2"
+              component="h2"
+              sx={{
+                fontWeight: 'bold',
+                mb: 6,
+                textAlign: 'center',
+                fontSize: { xs: '2rem', md: '2.5rem' },
+                background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
+              Our Core Values
+            </Typography>
+            <Grid 
+              container 
+              spacing={{ xs: 3, sm: 4, md: 5 }}
+              sx={{
+                display: 'flex',
+                flexDirection: { xs: 'column', md: 'row' },
+                alignItems: 'stretch',
+              }}
+            >
+              {coreValues.map((value, index) => (
+                <Grid 
+                  item 
+                  xs={12} 
+                  md={4} 
+                  key={index}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                    whileInView={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.2 }}
+                    viewport={{ once: true }}
+                    style={{ height: '100%' }}
                   >
                     <Paper
-                      component={motion.div}
-                      whileHover={{ y: -8, scale: 1.02 }}
-                      transition={{ duration: 0.3 }}
                       sx={{
-                        p: { xs: 3, md: 4 },
                         height: '100%',
+                        minHeight: { xs: '280px', md: '320px' },
                         background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
                         backdropFilter: 'blur(10px)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -518,6 +519,20 @@ const About = () => {
                         justifyContent: 'center',
                         position: 'relative',
                         overflow: 'hidden',
+                        p: { xs: 3, md: 4 },
+                        transition: 'all 0.3s ease-in-out',
+                        '&:hover': {
+                          transform: 'translateY(-8px)',
+                          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                          border: '1px solid rgba(255, 255, 255, 0.2)',
+                          '& .icon-container': {
+                            transform: 'scale(1.1) rotate(5deg)',
+                            backgroundColor: 'rgba(33, 150, 243, 0.2)',
+                          },
+                          '& .value-content': {
+                            transform: 'translateY(-5px)',
+                          },
+                        },
                         '&::before': {
                           content: '""',
                           position: 'absolute',
@@ -525,172 +540,105 @@ const About = () => {
                           left: 0,
                           right: 0,
                           height: '4px',
-                          background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-                          opacity: 0.7,
+                          background: value.gradient,
+                          opacity: 0.8,
                         },
                       }}
                     >
-                      <Avatar
-                        src={member.avatar}
-                        alt={member.name}
-                        sx={{
-                          width: { xs: 120, md: 150 },
-                          height: { xs: 120, md: 150 },
-                          mx: 'auto',
+                      <Box 
+                        className="icon-container"
+                        sx={{ 
+                          width: { xs: 80, md: 90 },
+                          height: { xs: 80, md: 90 },
+                          borderRadius: '20px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
                           mb: 3,
-                          border: '4px solid',
+                          border: '2px solid',
                           borderColor: 'primary.main',
-                          transition: 'transform 0.3s ease',
-                          '&:hover': {
-                            transform: 'scale(1.1)',
+                          transition: 'all 0.3s ease-in-out',
+                          position: 'relative',
+                          '&::after': {
+                            content: '""',
+                            position: 'absolute',
+                            top: -8,
+                            left: -8,
+                            right: -8,
+                            bottom: -8,
+                            borderRadius: '28px',
+                            background: 'linear-gradient(145deg, rgba(33, 150, 243, 0.1) 0%, rgba(33, 150, 243, 0.05) 100%)',
+                            zIndex: -1,
+                            opacity: 0,
+                            transition: 'all 0.3s ease-in-out',
                           },
-                          background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-                          fontSize: { xs: '3rem', md: '4rem' },
+                          '&:hover::after': {
+                            opacity: 1,
+                          },
                         }}
                       >
-                        {member.name.split(' ').map(n => n[0]).join('')}
-                      </Avatar>
-                      <Typography 
-                        variant="h5" 
-                        fontWeight="bold" 
-                        gutterBottom 
-                        sx={{ 
-                          color: '#fff',
-                          fontSize: { xs: '1.5rem', md: '1.75rem' },
-                          mb: 1,
-                        }}
-                      >
-                        {member.name}
-                      </Typography>
-                      <Typography 
-                        color="primary.main" 
-                        sx={{ 
-                          mb: 3,
-                          fontSize: { xs: '1rem', md: '1.1rem' },
-                          fontWeight: 500,
-                        }}
-                      >
-                        {member.role}
-                      </Typography>
-                      <Box sx={{ 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        gap: 2,
-                        mt: 'auto',
-                      }}>
-                        {member.social.github && (
-                          <IconButton 
-                            href={member.social.github} 
-                            target="_blank" 
-                            sx={{ 
-                              color: 'primary.main',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.2)',
-                                color: '#fff',
-                                background: 'rgba(255, 255, 255, 0.1)',
-                              },
-                            }}
-                          >
-                            <GitHubIcon />
-                          </IconButton>
-                        )}
-                        {member.social.linkedin && (
-                          <IconButton 
-                            href={member.social.linkedin} 
-                            target="_blank" 
-                            sx={{ 
-                              color: 'primary.main',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.2)',
-                                color: '#fff',
-                                background: 'rgba(255, 255, 255, 0.1)',
-                              },
-                            }}
-                          >
-                            <LinkedInIcon />
-                          </IconButton>
-                        )}
-                        {member.social.twitter && (
-                          <IconButton 
-                            href={member.social.twitter} 
-                            target="_blank" 
-                            sx={{ 
-                              color: 'primary.main',
-                              transition: 'all 0.3s ease',
-                              '&:hover': {
-                                transform: 'scale(1.2)',
-                                color: '#fff',
-                                background: 'rgba(255, 255, 255, 0.1)',
-                              },
-                            }}
-                          >
-                            <TwitterIcon />
-                          </IconButton>
-                        )}
+                        {value.icon}
+                      </Box>
+                      <Box className="value-content" sx={{ transition: 'all 0.3s ease-in-out' }}>
+                        <Typography 
+                          variant="h5" 
+                          sx={{ 
+                            fontWeight: 'bold', 
+                            mb: 2,
+                            color: '#fff',
+                            fontSize: { xs: '1.5rem', md: '1.75rem' },
+                            background: 'linear-gradient(45deg, #fff 30%, #e3f2fd 90%)',
+                            WebkitBackgroundClip: 'text',
+                            WebkitTextFillColor: 'transparent',
+                          }}
+                        >
+                          {value.title}
+                        </Typography>
+                        <Typography 
+                          color="text.secondary" 
+                          sx={{ 
+                            fontSize: { xs: '1rem', md: '1.1rem' },
+                            lineHeight: 1.7,
+                            opacity: 0.9,
+                            maxWidth: '90%',
+                            mx: 'auto',
+                          }}
+                        >
+                          {value.description}
+                        </Typography>
                       </Box>
                     </Paper>
                   </motion.div>
-              </Grid>
-            ))}
-          </Grid>
+                </Grid>
+              ))}
+            </Grid>
           </Box>
 
-          {/* Contact Section */}
-          <Box
-            sx={{
-              mt: { xs: 6, md: 8 },
-              textAlign: 'center',
-              p: { xs: 3, md: 4 },
-              borderRadius: 2,
-              background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-              backdropFilter: 'blur(10px)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-5px)',
-                boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-              },
-            }}
-          >
-            <Typography 
-              variant="h5" 
-              fontWeight="bold" 
-              gutterBottom 
-              sx={{ 
-                color: '#fff',
-                fontSize: { xs: '1.5rem', md: '1.75rem' },
-              }}
-            >
-              Want to Join Our Journey?
-            </Typography>
-            <Typography 
-              color="text.secondary" 
-              sx={{ 
-                mb: 3,
-                fontSize: { xs: '0.9rem', md: '1rem' },
-              }}
-            >
-              We're always looking for passionate individuals to join our team.
-            </Typography>
-            <Button
-              variant="contained"
-              size="large"
+          {/* Team Section */}
+          <Box sx={{ mb: { xs: 8, md: 10 } }}>
+            <Typography
+              variant="h2"
+              component="h2"
               sx={{
-                px: { xs: 3, md: 4 },
-                py: { xs: 1, md: 1.5 },
+                fontWeight: 'bold',
+                mb: 6,
+                textAlign: 'center',
+                fontSize: { xs: '2rem', md: '2.5rem' },
                 background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-                '&:hover': {
-                  background: 'linear-gradient(45deg, #0d47a1 30%, #1a237e 90%)',
-                  transform: 'scale(1.05)',
-                },
-                transition: 'all 0.3s ease',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
               }}
             >
-              Contact Us
-            </Button>
+              Meet the Team
+            </Typography>
+            <Grid container spacing={{ xs: 3, sm: 4, md: 5 }} justifyContent="center">
+              {teamMembers.map((member, index) => (
+                <Grid item xs={12} sm={6} md={4} key={index}>
+                  <TeamMember {...member} />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
         </motion.div>
       </Container>

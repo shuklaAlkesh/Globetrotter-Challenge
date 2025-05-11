@@ -22,14 +22,11 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
     component={motion.div}
     whileHover={{ y: -5 }}
     sx={{
-      p: { xs: 1.5, sm: 2 },
+      p: { xs: 2, sm: 2.5 },
       height: '100%',
-      width: '100%',
-      minHeight: { xs: '160px', sm: '180px' },
-      maxHeight: { xs: '180px', sm: '200px' },
-      maxWidth: { xs: '100%', sm: '300px' },
+      minHeight: { xs: '180px', sm: '200px' },
       background: 'linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%)',
-      borderRadius: 2,
+      borderRadius: 3,
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.2)',
       backdropFilter: 'blur(10px)',
       border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -37,22 +34,19 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
       flexDirection: 'column',
       overflow: 'hidden',
       position: 'relative',
-      mx: 'auto',
-      my: 1,
     }}
   >
     <Box sx={{ 
       display: 'flex', 
       alignItems: 'flex-start', 
-      mb: 1.5,
-      gap: 1.5,
-      flexShrink: 0,
+      mb: 2,
+      gap: 2,
     }}>
       <Box
         sx={{
-          width: { xs: 36, sm: 40 },
-          height: { xs: 36, sm: 40 },
-          minWidth: { xs: 36, sm: 40 },
+          width: { xs: 40, sm: 48 },
+          height: { xs: 40, sm: 48 },
+          minWidth: { xs: 40, sm: 48 },
           borderRadius: '50%',
           backgroundColor: 'primary.main',
           display: 'flex',
@@ -61,15 +55,15 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
           flexShrink: 0,
         }}
       >
-        <Icon sx={{ fontSize: { xs: 20, sm: 24 }, color: 'white' }} />
+        <Icon sx={{ fontSize: { xs: 24, sm: 28 }, color: 'white' }} />
       </Box>
       <Box sx={{ flex: 1, minWidth: 0 }}>
         <Typography 
           variant="h6" 
           fontWeight="bold"
           sx={{
-            fontSize: { xs: '0.9rem', sm: '1.1rem' },
-            mb: 0.5,
+            fontSize: { xs: '1rem', sm: '1.1rem' },
+            mb: 1,
             lineHeight: 1.2,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -83,7 +77,7 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
           color={status === 'Completed' ? 'success' : 'primary'}
           size="small"
           sx={{
-            height: '20px',
+            height: '24px',
             fontSize: '0.75rem',
             backgroundColor: status === 'Completed' ? 'rgba(76, 175, 80, 0.2)' : 'rgba(33, 150, 243, 0.2)',
             color: status === 'Completed' ? '#4CAF50' : 'primary.main',
@@ -95,9 +89,9 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
       color="text.secondary" 
       sx={{ 
         mb: 2,
-        fontSize: { xs: '0.8rem', sm: '0.9rem' },
+        fontSize: { xs: '0.9rem', sm: '1rem' },
         flex: 1,
-        lineHeight: 1.4,
+        lineHeight: 1.5,
         overflow: 'hidden',
         display: '-webkit-box',
         WebkitLineClamp: 2,
@@ -108,19 +102,19 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
     </Typography>
     <Box sx={{ 
       mt: 'auto',
-      pt: 1.5,
+      pt: 2,
       borderTop: '1px solid rgba(255, 255, 255, 0.1)',
     }}>
       <Box sx={{ 
         display: 'flex', 
         justifyContent: 'space-between', 
-        mb: 0.5,
+        mb: 1,
         alignItems: 'center',
       }}>
         <Typography 
           variant="body2" 
           color="text.secondary"
-          sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
+          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
         >
           Progress
         </Typography>
@@ -128,7 +122,7 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
           variant="body2" 
           color="primary.main" 
           fontWeight="bold"
-          sx={{ fontSize: { xs: '0.7rem', sm: '0.8rem' } }}
+          sx={{ fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
         >
           {progress}%
         </Typography>
@@ -137,7 +131,7 @@ const AchievementCard = ({ icon: Icon, title, description, progress, status }) =
         variant="determinate"
         value={progress}
         sx={{
-          height: { xs: 4, sm: 6 },
+          height: { xs: 6, sm: 8 },
           borderRadius: 4,
           backgroundColor: 'rgba(255, 255, 255, 0.1)',
           '& .MuiLinearProgress-bar': {
@@ -251,22 +245,7 @@ const Achievements = () => {
           </Typography>
 
           {/* First Row */}
-          <Grid 
-            container 
-            spacing={{ xs: 2, sm: 3, md: 4 }}
-            sx={{
-              mb: { xs: 3, sm: 4 },
-              justifyContent: 'center',
-              '& .MuiGrid-item': {
-                display: 'flex',
-                justifyContent: 'center',
-                height: { xs: 'auto', sm: '180px' },
-                px: { xs: 1, sm: 1.5 },
-                width: { xs: '100%', sm: 'auto' },
-                maxWidth: { sm: '300px' }
-              }
-            }}
-          >
+          <Grid container spacing={{ xs: 3, sm: 4, md: 5 }} sx={{ mb: { xs: 4, sm: 5, md: 6 } }}>
             {firstRow.map((achievement) => (
               <Grid item xs={12} sm={6} md={4} key={achievement.id}>
                 <AchievementCard {...achievement} />
@@ -275,23 +254,7 @@ const Achievements = () => {
           </Grid>
 
           {/* Second Row */}
-          <Grid 
-            container 
-            spacing={{ xs: 2, sm: 4, md: 6 }}
-            sx={{
-              justifyContent: 'center',
-              '& .MuiGrid-item': {
-                display: 'flex',
-                justifyContent: 'center',
-                height: { xs: 'auto', sm: '180px' },
-                width: { xs: '100%', sm: 'auto' },
-                maxWidth: { sm: '300px' },
-                '& > div': {
-                  mx: { sm: 2, md: 3 }
-                }
-              }
-            }}
-          >
+          <Grid container spacing={{ xs: 3, sm: 4, md: 5 }}>
             {secondRow.map((achievement) => (
               <Grid item xs={12} sm={6} md={4} key={achievement.id}>
                 <AchievementCard {...achievement} />
