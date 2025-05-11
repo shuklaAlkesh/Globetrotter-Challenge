@@ -72,11 +72,11 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
     const fetchDestinations = async () => {
       try {
         setLoading(true);
+        setError(null);
         const data = await getDestinations();
-        // Ensure we have all destinations loaded
         if (data && data.length > 0) {
-        setDestinations(data);
-        setCurrentQuestionIndex(0);
+          setDestinations(data);
+          setCurrentQuestionIndex(0);
           setSelectedAnswer(null);
           setShowFunFact(false);
           setFeedbackMessage('');
@@ -85,7 +85,7 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         }
       } catch (error) {
         console.error('Error fetching destinations:', error);
-        setError('Failed to load game data. Please try again.');
+        setError(error.message || 'Failed to load game data. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -259,19 +259,18 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         gap={2}
         sx={{
           background: 'linear-gradient(145deg, #1a237e 0%, #0d47a1 100%)',
+          color: 'white',
+          padding: 2,
+          textAlign: 'center'
         }}
       >
-        <Typography variant="h6" sx={{ color: '#fff' }}>{error}</Typography>
+        <Typography variant="h5" color="error">
+          {error}
+        </Typography>
         <Button 
           variant="contained" 
+          color="primary"
           onClick={() => window.location.reload()}
-          sx={{
-            background: 'linear-gradient(45deg, #1a237e 30%, #0d47a1 90%)',
-            color: 'white',
-            '&:hover': {
-              background: 'linear-gradient(45deg, #0d47a1 30%, #1a237e 90%)',
-            }
-          }}
         >
           Try Again
         </Button>
@@ -292,7 +291,7 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
           background: 'linear-gradient(145deg, #1a237e 0%, #0d47a1 100%)',
         }}
       >
-        <Typography variant="h6" sx={{ color: '#fff' }}>No questions available. Please try again later.</Typography>
+        <CircularProgress size={60} sx={{ color: '#fff' }} />
       </Box>
     );
   }

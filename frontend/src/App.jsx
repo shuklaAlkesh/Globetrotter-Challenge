@@ -44,6 +44,7 @@ export default function App() {
     const savedUsername = localStorage.getItem('username');
     const savedAge = localStorage.getItem('age');
     const savedScore = localStorage.getItem('userScore');
+    const savedGameState = localStorage.getItem('gameState');
     if (savedUsername) {
       setUser({
         username: savedUsername,
@@ -54,14 +55,19 @@ export default function App() {
       if (savedScore) {
         setScore(parseInt(savedScore));
       }
+      if (savedGameState) {
+        setGameState(savedGameState);
+      }
     }
   }, []);
 
   const handleStartGame = () => {
     if (user) {
       setGameState('playing');
+      localStorage.setItem('gameState', 'playing');
     } else {
       setGameState('registration');
+      localStorage.setItem('gameState', 'registration');
     }
   };
 
@@ -74,6 +80,7 @@ export default function App() {
       };
       setUser(newUser);
       setGameState('playing');
+      localStorage.setItem('gameState', 'playing');
     } catch (error) {
       console.error('Error creating user:', error);
       alert('Failed to create user. Please try again.');

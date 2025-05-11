@@ -1,37 +1,52 @@
 import axios from 'axios';
+import { API_URL } from '../config';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+// Create axios instance with default config
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  timeout: 10000, // 10 second timeout
+});
+
+// Add response interceptor for better error handling
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error('API Error:', error.response?.data || error.message);
+    return Promise.reject(error);
+  }
+);
 
 export const createUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/users`, userData);
+    const response = await api.post('/users', userData);
     return response.data;
   } catch (error) {
-    throw new Error(JSON.stringify(error.response?.data) || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to create user');
   }
 };
 
 export const getDestinations = async () => {
   try {
-    const response = await axios.get(`${API_URL}/destinations`);
+    const response = await api.get('/destinations');
     if (!response.data || !Array.isArray(response.data)) {
       throw new Error('Invalid destinations data received');
     }
     return response.data;
   } catch (error) {
     console.error('Error fetching destinations:', error);
-    throw new Error('Failed to fetch destinations');
+    throw new Error(error.response?.data?.message || 'Failed to fetch destinations');
   }
 };
 
 export const updateUserScore = async (userId, score) => {
   try {
-    console.log('Updating score for user:', userId, 'New score:', score);
-    const response = await axios.put(`${API_URL}/users/${userId}/score`, { score });
-    console.log('Score update response:', response.data);
+    const response = await api.put(`/users/${userId}/score`, { score });
     return response.data;
   } catch (error) {
     console.error('Error updating score:', error);
-    throw new Error('Failed to update score');
+    throw new Error(error.response?.data?.message || 'Failed to update score');
   }
 };
