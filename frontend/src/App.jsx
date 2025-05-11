@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useSearchParams } from 'react-router-dom';
 import Home from './components/Home';
 import GameBoard from './components/GameBoard';
 import UserForm from './components/UserForm';
+import UserProfile from './components/UserProfile';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Leaderboard from './pages/Leaderboard';
@@ -38,6 +39,24 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [gameState, setGameState] = useState('home');
 
+  // Check for existing user on component mount
+  useEffect(() => {
+    const savedUsername = localStorage.getItem('username');
+    const savedAge = localStorage.getItem('age');
+    const savedScore = localStorage.getItem('userScore');
+    if (savedUsername) {
+      setUser({
+        username: savedUsername,
+        age: savedAge,
+        name: savedUsername,
+        score: savedScore ? parseInt(savedScore) : 0
+      });
+      if (savedScore) {
+        setScore(parseInt(savedScore));
+      }
+    }
+  }, []);
+
   const handleStartGame = () => {
     if (user) {
       setGameState('playing');
@@ -48,11 +67,11 @@ export default function App() {
 
   const handleUserSubmit = async (userData) => {
     try {
-      const newUser = await createUser({
-        username: userData.username || `user_${Date.now()}`,
-        name: userData.name || 'Anonymous',
-        age: userData.age || 0
-      });
+      const newUser = {
+        username: userData.username,
+        name: userData.username,
+        age: userData.age
+      };
       setUser(newUser);
       setGameState('playing');
     } catch (error) {
@@ -62,36 +81,22 @@ export default function App() {
   };
 
   const updateScore = async (newScore) => {
-    if (!user || !user._id) {
-      console.error('No user or user ID available');
+    if (!user) {
+      console.error('No user available');
       return;
     }
 
     try {
-      console.log('Updating score for user:', user._id, 'New score:', newScore);
-      const updatedUser = await updateUserScore(user._id, newScore);
-      console.log('Score updated successfully:', updatedUser);
       setScore(newScore);
-      setUser(updatedUser);
+      // Update user state with new score
+      setUser(prevUser => ({
+        ...prevUser,
+        score: newScore
+      }));
+      // Save score to localStorage
+      localStorage.setItem('userScore', newScore);
     } catch (error) {
       console.error('Error updating score:', error);
-    }
-  };
-
-  const renderGameContent = () => {
-    if (!user) {
-      return <UserForm onSubmit={handleUserSubmit} />;
-    }
-
-    switch (gameState) {
-      case 'home':
-        return <Home onStartGame={handleStartGame} />;
-      case 'registration':
-        return <UserForm onSubmit={handleUserSubmit} />;
-      case 'playing':
-        return <GameBoard onScoreUpdate={updateScore} user={user} setGameState={setGameState} />;
-      default:
-        return <Home onStartGame={handleStartGame} />;
     }
   };
 
@@ -110,7 +115,15 @@ export default function App() {
           <main style={{ flex: 1, padding: '20px 0' }}>
             <Routes>
               <Route path="/" element={<Home onStartGame={handleStartGame} />} />
-              <Route path="/game" element={renderGameContent()} />
+              <Route path="/game" element={
+                !user ? (
+                  <UserProfile onUserRegistered={handleUserSubmit} />
+                ) : gameState === 'playing' ? (
+                  <GameBoard onScoreUpdate={updateScore} user={user} setGameState={setGameState} />
+                ) : (
+                  <UserProfile onUserRegistered={handleUserSubmit} />
+                )
+              } />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/achievements" element={<Achievements />} />
               <Route path="/about" element={<About />} />

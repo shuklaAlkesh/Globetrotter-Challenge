@@ -311,12 +311,12 @@ const Navbar = ({ username, score }) => {
       <List>
         {menuItems.map((item) => (
           <ListItem 
-            button 
             key={item.text}
             component={RouterLink}
             to={item.path}
             onClick={item.onClick || handleDrawerToggle}
             sx={{
+              cursor: 'pointer',
               '&:hover': {
                 backgroundColor: 'rgba(255, 255, 255, 0.1)',
               }

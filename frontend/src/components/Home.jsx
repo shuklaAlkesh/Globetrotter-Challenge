@@ -6,7 +6,10 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LeaderboardIcon from '@mui/icons-material/Leaderboard';
+import ShareIcon from '@mui/icons-material/Share';
 import { useNavigate } from 'react-router-dom';
+import ChallengePopup from './ChallengePopup';
+import { useState } from 'react';
 
 const FeatureCard = ({ icon: Icon, title, description }) => (
   <motion.div
@@ -33,10 +36,20 @@ const FeatureCard = ({ icon: Icon, title, description }) => (
 
 export default function Home({ onStartGame }) {
   const navigate = useNavigate();
+  const [showChallengePopup, setShowChallengePopup] = useState(false);
 
   const handleStartGame = () => {
     onStartGame();
     navigate('/game');
+  };
+
+  const handleChallengeFriend = () => {
+    const username = localStorage.getItem('username');
+    if (username) {
+      setShowChallengePopup(true);
+    } else {
+      navigate('/game');
+    }
   };
 
   const scrollToSection = (sectionId) => {
@@ -85,6 +98,28 @@ export default function Home({ onStartGame }) {
                 sx={{ px: 4, py: 1.5, borderRadius: '30px' }}
               >
                 Start Game
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }}>
+              <Button
+                variant="outlined"
+                size="large"
+                onClick={handleChallengeFriend}
+                startIcon={<ShareIcon />}
+                sx={{ 
+                  px: 4, 
+                  py: 1.5, 
+                  borderRadius: '30px',
+                  borderColor: 'primary.main',
+                  color: 'primary.main',
+                  '&:hover': {
+                    borderColor: 'primary.dark',
+                    bgcolor: 'primary.main',
+                    color: 'white'
+                  }
+                }}
+              >
+                Challenge a Friend
               </Button>
             </motion.div>
           </Box>
@@ -313,6 +348,13 @@ export default function Home({ onStartGame }) {
             </motion.div>
           </Box>
         </motion.div>
+
+        {showChallengePopup && (
+          <ChallengePopup 
+            username={localStorage.getItem('username')} 
+            onClose={() => setShowChallengePopup(false)} 
+          />
+        )}
       </Box>
     </Container>
   );

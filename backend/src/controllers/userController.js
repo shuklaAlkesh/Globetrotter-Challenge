@@ -7,9 +7,9 @@ exports.createUser = async (req, res) => {
     
     // Create user with minimal data
     const user = new User({
-      username: username || `user_${Date.now()}`,
-      name: name || 'Anonymous',
-      age: age || 0,
+      username,
+      name,
+      age,
       score: 0
     });
 
@@ -47,4 +47,4 @@ exports.updateUserScore = async (req, res) => {
     console.error('Error updating score:', error);
     res.status(500).json({ message: 'Error updating score' });
   }
-}; 
+};

@@ -36,6 +36,7 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
   });
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [incorrectAnswers, setIncorrectAnswers] = useState(0);
+  const [currentScore, setCurrentScore] = useState(0);
 
   // Timer effect
   useEffect(() => {
@@ -109,6 +110,18 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
       setStreak(prev => prev + 1);
       setCorrectAnswers(prev => prev + 1);
       
+      // Calculate new score with fixed bonuses
+      const basePoints = 10;
+      const streakBonus = Math.floor(streak / 3) * 5; // 5 bonus points every 3 correct answers
+      const timeBonus = Math.min(Math.floor(timeLeft / 5), 5); // Max 5 points for time bonus
+      const newScore = currentScore + basePoints + streakBonus + timeBonus;
+      
+      // Update score
+      setCurrentScore(newScore);
+      if (onScoreUpdate) {
+        onScoreUpdate(newScore);
+      }
+
       // Happy confetti for correct answer
       confetti({
         particleCount: 100,
@@ -128,12 +141,6 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         "Amazing! You're a true globetrotter! 🌍"
       ];
       setFeedbackMessage(correctMessages[Math.floor(Math.random() * correctMessages.length)]);
-
-      if (user) {
-        // Bonus points for streak
-        const streakBonus = Math.floor(streak / 3) * 5; // 5 bonus points every 3 correct answers
-        onScoreUpdate(user.score + 10 + streakBonus);
-      }
     } else {
       // Play wrong answer sound if enabled
       if (settings.soundEnabled) {
@@ -146,6 +153,16 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
       setStreak(0);
       setIncorrectAnswers(prev => prev + 1);
       
+      // Calculate penalty
+      const penalty = 5;
+      const newScore = Math.max(0, currentScore - penalty); // Ensure score doesn't go below 0
+      
+      // Update score
+      setCurrentScore(newScore);
+      if (onScoreUpdate) {
+        onScoreUpdate(newScore);
+      }
+
       // Sad emoji confetti for wrong answer
       confetti({
         particleCount: 50,
@@ -169,10 +186,6 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
         "Keep exploring! The world is full of wonders! 🌍"
       ];
       setFeedbackMessage(wrongMessages[Math.floor(Math.random() * wrongMessages.length)]);
-
-      if (user) {
-        onScoreUpdate(user.score - 5);
-      }
     }
 
     // Move to next question after 3 seconds
@@ -213,6 +226,10 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
     setStreak(0);
     setCorrectAnswers(0);
     setIncorrectAnswers(0);
+    setCurrentScore(0); // Reset score when playing again
+    if (onScoreUpdate) {
+      onScoreUpdate(0);
+    }
   };
 
   if (loading) {
@@ -363,7 +380,7 @@ export default function GameBoard({ onScoreUpdate, user, setGameState }) {
                     <EmojiEventsIcon sx={{ color: '#fff', fontSize: 28 }} />
                   </motion.div>
                   <Typography variant="h6" sx={{ color: '#fff', fontWeight: 'bold' }}>
-                    Score: {user?.score || 0}
+                    Score: {currentScore}
                   </Typography>
                 </Box>
 
